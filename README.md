@@ -1,8 +1,13 @@
 Name : PHANI PAGIDIMARRI
+
 Company : CODTECH IT SOLUTIONS
+
 ID : CT08DS55
+
 Domain : C Prograaming
+
 Duration : Dec to Jan 2025
+
 Mentor : Sravani 
 
 ### Overview Of The Project
