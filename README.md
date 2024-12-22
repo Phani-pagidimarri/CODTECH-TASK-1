@@ -8,7 +8,7 @@ Domain : C Prograaming
 
 Duration : Dec to Jan 2025
 
-Mentor : Sravani 
+Mentor : Neela Santhosh 
 
 ### Overview Of The Project
 # Project : Quiz Game development using C 
