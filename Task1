@@ -1,0 +1,182 @@
+/* Quiz game development using C Language*/
+
+#include <stdio.h>
+#include <string.h>
+#include <time.h>  // For time functions
+
+typedef struct Account
+{
+    char username[50];
+    int score;
+} Ac;
+
+// Function to save a new user and ensure the username is unique
+void saveUser(int *index, const char new_user[], Ac user[])
+{
+    // Check if the user array is full (maximum 50 users)
+    if (*index < 50)
+    {
+        // Check if the username already exists
+        for (int i = 0; i < *index; i++)
+        {
+            if (strcmp(new_user, user[i].username) == 0)
+            {
+                printf("This Username is Already Taken.\n");
+                return;
+            }
+        }
+
+        // If the username is unique, save it with a score of 0
+        strcpy(user[*index].username, new_user);
+        user[*index].score = 0;
+        printf("User Created Successfully\n");
+        (*index)++;
+    }
+    else
+    {
+        printf("Sorry, Users Are Full.\n");
+    }
+}
+
+// Function to update the score based on whether the answer is correct or incorrect
+void updateScore(char new_user[], Ac user[], int score_change)
+{
+    // Iterate through the user array to find the matching username
+    for (int i = 0; i < 50; i++)
+    {
+        if (strcmp(user[i].username, new_user) == 0)
+        {
+            // Update the score by the specified amount (positive or negative)
+            user[i].score += score_change;
+            printf("Your Score is: %d\n", user[i].score);
+            return;
+        }
+    }
+    printf("User not found.\n");
+}
+
+// Function to display the user's current score
+void showScore(char new_user[], Ac user[])
+{
+    // Search for the user by username
+    for (int i = 0; i < 50; i++)
+    {
+        if (strcmp(new_user, user[i].username) == 0)
+        {
+            // Display the username and score if found
+            printf("Your Username: %s\n", user[i].username);
+            printf("Your Score: %d\n", user[i].score);
+            return;
+        }
+    }
+    printf("User not found.\n");
+}
+
+// Function to ask a question and check the answer with a timer
+void askQuestion(const char* question, const char* options[], int correct_option, char new_user[], Ac user[])
+{
+    int ans;
+    time_t start_time, end_time;
+
+    // Print the question and options to the user
+    printf("%s\n", question);
+    for (int i = 0; i < 4; i++)
+    {
+        printf("%d -> %s\n", i + 1, options[i]);
+    }
+
+    // Start the timer
+    start_time = time(NULL);
+
+    // Read the user's answer using scanf_s (safer)
+    scanf_s("%d", &ans);  // Use scanf_s instead of scanf for better safety
+
+    // Get the time after the user answers
+    end_time = time(NULL);
+
+    // Check if the user took more than 60 seconds to answer
+    if (difftime(end_time, start_time) > 60)
+    {
+        printf("Time is up! You took too long to answer.\n");
+        updateScore(new_user, user, -5);  // Penalize the user for taking too long
+        return;
+    }
+
+    // Check if the answer is correct or incorrect and update the score
+    if (ans == correct_option)
+    {
+        printf("Correct Answer!\n");
+        updateScore(new_user, user, 5);
+    }
+    else
+    {
+        printf("Incorrect Answer.\n");
+        updateScore(new_user, user, -5);
+    }
+}
+
+int main()
+{
+    int op;
+    char new_user[50];
+    int index = 0;
+    Ac user[50];
+
+    do
+    {
+        // Display the main menu options
+        printf("\nQuiz Game\n");
+        printf("1 - Start The Game\n");
+        printf("2 - Show My Score\n");
+        printf("0 - Exit\n");
+        printf("= ");
+        scanf_s("%d", &op);  // Using scanf_s for safer input
+
+        switch (op)
+        {
+        case 1:
+            // Prompt for a new username and save the user
+            printf("\nEnter Username: ");
+            scanf_s("%49s", new_user, sizeof(new_user));  // Using scanf_s for safer input
+
+            saveUser(&index, new_user, user);
+
+            // Question 1
+            askQuestion("Q1. What is the capital of Japan?", 
+                        (const char*[]){"Beijing", "Tokyo", "Seoul", "Bangkok"}, 
+                        2, new_user, user);
+
+            // Question 2
+            askQuestion("Q2. Which element has the chemical symbol 'H'?", 
+                        (const char*[]){"Hydrogen", "Helium", "Carbon", "Nitrogen"}, 
+                        1, new_user, user);
+
+            // question 3
+            askQuestion("Q2. Who is the first President of India?", 
+                        (const char*[]){"Dr. Rajendra Prasad", "APJ abdul kalam", "Dr. Sarvepalli Radhakrishna", "Dr. Zakir Hussain"}, 
+                        1, new_user, user);
+            // Add more questions in a similar fashion...
+
+            break;
+
+        case 2:
+            // Prompt for username to show their score
+            printf("\nEnter Username: ");
+            scanf_s("%49s", new_user, sizeof(new_user));  // Using scanf_s for safer input
+            showScore(new_user, user);
+            break;
+
+        case 0:
+            // Exit the program
+            printf("Exiting the game...\n");
+            break;
+
+        default:
+            // Handle invalid menu options
+            printf("Invalid option selected. Please try again.\n");
+            break;
+        }
+    } while (op != 0);
+
+    return 0;
+}
